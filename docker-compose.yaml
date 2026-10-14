@@ -1,0 +1,39 @@
+services:
+  # Base de datos origen (Simula el sistema de Grammys)
+  mysql-source:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: grammy_source
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./sql/source_setup.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data/grammy.csv:/var/lib/mysql-files/grammy.csv
+
+  # Data Warehouse Analítico
+  mysql-dw:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: music_dw
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./sql/dw_schema.sql:/docker-entrypoint-initdb.d/init.sql
+
+ # Airflow (Modificado para levantar UI y Scheduler juntos)
+  airflow-webserver:
+    image: apache/airflow:2.8.1
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./src:/opt/airflow/src
+      - ./gx:/opt/airflow/gx
+      - ./data:/opt/airflow/data
+      - ./scripts:/opt/airflow/scripts
+    command: standalone

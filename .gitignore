@@ -1,0 +1,22 @@
+# Entorno virtual de Python
+venv/
+.venv/
+env/
+
+# Variables de entorno y secretos
+.env
+
+# Caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+dags/__pycache__/
+src/__pycache__/
+
+# Great Expectations archivos no committeados
+gx/uncommitted/
+
+# Archivos del sistema operativo o IDEs
+.DS_Store
+.idea/
+.vscode/
